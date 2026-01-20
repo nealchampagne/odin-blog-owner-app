@@ -1,9 +1,9 @@
 import { Outlet } from "react-router-dom";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
-import styles from "./App.module.css";
+import styles from "./AdminLayout.module.css";
 
-const App = () => {
+const AdminLayout = () => {
   return (
     <div className={styles.layout}>
       <Sidebar />
@@ -19,4 +19,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default AdminLayout;

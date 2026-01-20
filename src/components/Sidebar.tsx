@@ -6,7 +6,6 @@ const Sidebar = () => {
     <aside className={styles.sidebar}>
       <Link className={styles.navItem} to="/dashboard">Dashboard</Link>
       <Link className={styles.navItem} to="/posts">Posts</Link>
-      <Link className={styles.navItem} to="/comments">Comments</Link>
     </aside>
   );
 };

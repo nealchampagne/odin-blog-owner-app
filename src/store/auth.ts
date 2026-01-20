@@ -17,7 +17,7 @@ type AuthState = {
 export const useAuth = create<AuthState>((set) => ({
   user: null,
   token: null,
-  loading: false,
+  loading: true,
   error: null,
 
   login: async (email, password) => {
@@ -44,7 +44,7 @@ export const useAuth = create<AuthState>((set) => ({
   logout: () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    set({ user: null, token: null });
+    set({ user: null, token: null, loading: false });
   },
 
   restore: () => {
@@ -52,10 +52,19 @@ export const useAuth = create<AuthState>((set) => ({
     const user = localStorage.getItem("user");
 
     if (token && user) {
-      set({
-        token,
-        user: JSON.parse(user)
-      });
+      try {
+        set({
+          token,
+          user: JSON.parse(user),
+          loading: false
+        });
+        return;
+      } catch {
+        // If JSON parsing fails, treat as logged out
+      }
     }
+
+    // Always stop loading, even if no token or user
+    set({ loading: false, user: null, token: null });
   }
 }));

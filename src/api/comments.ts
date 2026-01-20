@@ -7,6 +7,12 @@ const getAllComments = () =>
 const getCommentsForPost = (postId: string) =>
   api<Comment[]>(`/posts/${postId}/comments`);
 
+const updateComment = (id: string, data: { content: string }) =>
+  api<Comment>(`/comments/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(data)
+  });
+
 const deleteComment = (id: string) =>
   api<{ success: boolean }>(`/comments/${id}`, {
     method: "DELETE"
@@ -22,5 +28,6 @@ export {
   getAllComments,
   getCommentsForPost,
   deleteComment,
-  createComment
+  createComment,
+  updateComment
 };

@@ -4,6 +4,7 @@ import styles from "./PostsList.module.css";
 
 import { getPosts, deletePost } from "../api/posts";
 import { getCommentsForPost } from "../api/comments";
+import EmptyState from "../components/EmptyState";
 
 import type { Post } from "../types/post";
 
@@ -46,12 +47,23 @@ const PostsList = () => {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.heading}>Posts</h1>
+      <div className={styles.headerRow}>
+        <h1 className={styles.heading}>Posts</h1>
+
+        <Link to="/posts/new" className={styles.createButton}>
+          + Create Post
+        </Link>
+      </div>
 
       {loading ? (
         <p>Loading…</p>
       ) : posts.length === 0 ? (
-        <p className={styles.empty}>No posts yet.</p>
+        <EmptyState
+          title="No posts yet."
+          message="Create your first post to get started."
+          actionLabel="Create your first post"
+          actionTo="/posts/new"
+        />
       ) : (
         <div className={styles.tableWrapper}>
           <table className={styles.table}>
@@ -67,7 +79,17 @@ const PostsList = () => {
             <tbody>
               {posts.map((post) => (
                 <tr key={post.id} className={styles.row}>
-                  <td>{post.title}</td>
+                  <td>{post.title}
+                    <span
+                      className={ 
+                        post.published
+                        ? styles.badgePublished
+                        : styles.badgeDraft
+                      }
+                    >
+                      {post.published ? "Published" : "Draft"}
+                    </span>
+                  </td>
                   <td>{commentCounts[post.id] ?? 0}</td>
                   <td>{new Date(post.createdAt).toLocaleDateString()}</td>
 
@@ -78,13 +100,6 @@ const PostsList = () => {
                         className={`${styles.button} ${styles.viewButton}`}
                       >
                         View
-                      </Link>
-
-                      <Link
-                        to={`/posts/${post.id}/edit`}
-                        className={`${styles.button} ${styles.editButton}`}
-                      >
-                        Edit
                       </Link>
 
                       <button
@@ -103,6 +118,7 @@ const PostsList = () => {
       )}
     </div>
   );
+
 };
 
 export default PostsList;

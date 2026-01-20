@@ -15,7 +15,7 @@ const updatePost = (
   id: string, 
   data: UpdatePostPayload) =>
     api<Post>(`/posts/${id}`, {
-      method: "PUT",
+      method: "PATCH",
       body: JSON.stringify(data)
     }) as Promise<Post>;
 
@@ -24,10 +24,22 @@ const deletePost = (id: string) =>
     method: "DELETE"
   });
 
+const publishPost = (id: string) =>
+  api<Post>(`/posts/${id}/publish`, {
+    method: "PUT"
+  });
+
+const unpublishPost = (id: string) =>
+  api<Post>(`/posts/${id}/unpublish`, {
+    method: "PUT"
+  });
+
 export { 
   getPosts, 
   getPost, 
   createPost, 
   updatePost, 
-  deletePost 
+  deletePost,
+  publishPost,
+  unpublishPost
 };
