@@ -1,0 +1,60 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1rem 0;
+}
+
+.label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.textarea {
+  min-height: 180px;
+  resize: vertical;
+}
+
+.buttonRow {
+  display: flex;
+  gap: 1rem;
+}
+
+.button {
+  background: #111;
+  color: white;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s ease;
+}
+
+.button:hover {
+  background: #333;
+}
+
+.cancelButton {
+  background: #ddd;
+  color: #111;
+}
+
+.cancelButton:hover {
+  background: #ccc;
+}
+
+.error {
+  color: #d33;
+  font-size: 0.9rem;
+}
