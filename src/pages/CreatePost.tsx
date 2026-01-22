@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./CreatePost.module.css";
-import PostForm from "../components/PostForm";
-import type { PostFormValues } from "../components/PostForm";
 import { createPost } from "../api/posts";
+import MarkdownEditor from "../components/MarkdownEditor";
 
 const CreatePost = () => {
   const navigate = useNavigate();
@@ -11,7 +10,7 @@ const CreatePost = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (values: PostFormValues) => {
+  const handleSubmit = async (values: { title: string; content: string }) => {
     setSaving(true);
     setError(null);
 
@@ -25,20 +24,17 @@ const CreatePost = () => {
     }
   };
 
-  const handleCancel = () => {
-    navigate("/posts");
-  };
-
   return (
     <div className={styles.container}>
       <h1 className={styles.heading}>Create New Post</h1>
 
-      <PostForm
-        initialValues={{ title: "", content: "" }}
+      <MarkdownEditor
+        initialTitle=""
+        initialContent=""
         loading={saving}
         error={error}
         onSubmit={handleSubmit}
-        onCancel={handleCancel}
+        onCancel={() => navigate("/posts")}
       />
     </div>
   );

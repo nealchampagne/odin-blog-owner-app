@@ -55,7 +55,7 @@
 }
 
 .badgePublished {
-  background: #10b981; /* emerald-500 */
+  background: #10b981;
   color: white;
   padding: 0.15rem 0.45rem;
   border-radius: 4px;
@@ -65,7 +65,7 @@
 }
 
 .badgeDraft {
-  background: #6b7280; /* gray-500 */
+  background: #f59e0b;
   color: white;
   padding: 0.15rem 0.45rem;
   border-radius: 4px;

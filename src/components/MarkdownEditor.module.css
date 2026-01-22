@@ -1,0 +1,132 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.titleInput {
+  flex: 1;
+  font-size: 1.4rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+}
+
+.buttonRow {
+  display: flex;
+  gap: 0.75rem;
+  margin-left: 1rem;
+}
+
+.saveButton {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.saveButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cancelButton {
+  background: #e5e7eb;
+  color: #374151;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.error {
+  color: #dc2626;
+  font-size: 0.9rem;
+}
+
+.editorGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.editorPane,
+.previewPane {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.textarea {
+  width: 100%;
+  height: 400px;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 0.95rem;
+  resize: vertical;
+}
+
+.previewPane {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  padding: 0.75rem;
+  overflow-y: auto;
+}
+
+.previewContent {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.markdown {
+  line-height: 1.6;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3 {
+  margin-top: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.markdown p {
+  margin-bottom: 1rem;
+}
+
+.markdown ul,
+.markdown ol {
+  margin-left: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.markdown code {
+  background: #f3f4f6;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.markdown pre {
+  background: #f3f4f6;
+  padding: 1rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}

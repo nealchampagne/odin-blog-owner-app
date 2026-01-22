@@ -12,8 +12,9 @@ import {
 
 import type { Post } from "../types/post";
 import type { Comment } from "../types/comment";
-import type { PostFormValues } from "../components/PostForm";
-import PostForm from "../components/PostForm";
+
+import ReactMarkdown from "react-markdown";
+import MarkdownEditor from "../components/MarkdownEditor";
 
 const PostDetail = () => {
   const { id } = useParams();
@@ -23,6 +24,7 @@ const PostDetail = () => {
   const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState("");
   const [error, setError] = useState<string | null>(null);
+
   const [editingPost, setEditingPost] = useState(false);
   const [savingPost, setSavingPost] = useState(false);
 
@@ -55,8 +57,7 @@ const PostDetail = () => {
     try {
       await createComment(id!, { content: commentText });
       setCommentText("");
-      
-      // Refresh comments list
+
       const updatedComments = await getCommentsForPost(id!);
       setComments(updatedComments);
     } catch {
@@ -69,8 +70,7 @@ const PostDetail = () => {
 
     try {
       await deleteComment(commentId);
-      
-      // Refresh comments list
+
       const updatedComments = await getCommentsForPost(id!);
       setComments(updatedComments);
     } catch {
@@ -87,7 +87,6 @@ const PostDetail = () => {
     try {
       await updateComment(commentId, { content: editCommentText });
 
-      // Refresh comments
       const updated = await getCommentsForPost(id!);
       setComments(updated);
 
@@ -111,14 +110,13 @@ const PostDetail = () => {
     setEditingPost(false);
   };
 
-  const handleSaveEditPost = async (values: PostFormValues) => {
+  const handleSaveEditPost = async (values: { title: string; content: string }) => {
     setSavingPost(true);
     setError(null);
 
     try {
       await updatePost(id!, values);
 
-      // Refresh post data
       const updated = await getPost(id!);
       setPost(updated);
 
@@ -158,18 +156,23 @@ const PostDetail = () => {
     <div className={styles.container}>
       {error && <p className={styles.error}>{error}</p>}
 
-      <h1 className={styles.heading}>{post.title}{post.published ? "" : "  (Draft)"}</h1>
+      <a className={styles.backButton} onClick={() => window.history.back()}>
+        &lt; Back
+      </a>
+
+      <h1 className={styles.heading}>
+        {post.title}
+        {post.published ? "" : " (Draft)"}
+      </h1>
 
       {editingPost ? (
-        <PostForm
-          initialValues={{
-            title: post.title ?? "",
-            content: post.content ?? ""
-          }}
+        <MarkdownEditor
+          initialTitle={post.title ?? ""}
+          initialContent={post.content ?? ""}
           loading={savingPost}
           error={error}
           onSubmit={handleSaveEditPost}
-          onCancel={handleCancelEditPost }
+          onCancel={handleCancelEditPost}
         />
       ) : (
         <>
@@ -189,8 +192,8 @@ const PostDetail = () => {
             )}
           </div>
 
-          <div className={styles.content}>
-            <p>{post.content}</p>
+          <div className={`${styles.content} ${styles.markdown}`}>
+            <ReactMarkdown>{post.content ?? ""}</ReactMarkdown>
           </div>
         </>
       )}
@@ -207,55 +210,54 @@ const PostDetail = () => {
                 <div className={styles.commentMeta}>
                   {new Date(c.createdAt).toLocaleString()}
                 </div>
+
                 {editingCommentId === c.id ? (
-            <div className={styles.editContainer}>
-              <textarea
-                className={styles.textarea}
-                value={editCommentText}
-                onChange={(e) => setEditCommentText(e.target.value)}
-              />
+                  <div className={styles.editContainer}>
+                    <textarea
+                      className={styles.textarea}
+                      value={editCommentText}
+                      onChange={(e) => setEditCommentText(e.target.value)}
+                    />
 
-              <div className={styles.commentActions}>
-                <button
-                  className={styles.submitButton}
-                  onClick={() => handleSaveCommentEdit(c.id)}
-                >
-                  Save
-                </button>
+                    <div className={styles.commentActions}>
+                      <button
+                        className={styles.submitButton}
+                        onClick={() => handleSaveCommentEdit(c.id)}
+                      >
+                        Save
+                      </button>
 
-                <button
-                  className={styles.cancelButton}
-                  onClick={handleCancelCommentEdit}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          ) : (
-            <>
-              <div>{c.content}</div>
+                      <button
+                        className={styles.cancelButton}
+                        onClick={handleCancelCommentEdit}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div>{c.content}</div>
 
-              <div className={styles.commentActions}>
-                {/* Only show Edit if admin is the author */}
-                {c.authorId === post.authorId && (
-                  <button
-                    className={styles.editButton}
-                    onClick={() => handleStartCommentEdit(c)}
-                  >
-                    Edit
-                  </button>
+                    <div className={styles.commentActions}>
+                      {c.authorId === post.authorId && (
+                        <button
+                          className={styles.editButton}
+                          onClick={() => handleStartCommentEdit(c)}
+                        >
+                          Edit
+                        </button>
+                      )}
+
+                      <button
+                        className={styles.deleteButton}
+                        onClick={() => handleDeleteComment(c.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </>
                 )}
-
-                <button
-                  className={styles.deleteButton}
-                  onClick={() => handleDeleteComment(c.id)}
-                >
-                  Delete
-                </button>
-              </div>
-            </>
-          )}
-
               </div>
             ))}
           </div>
