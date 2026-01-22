@@ -12,7 +12,10 @@ const AdminLayout = () => {
         <Header />
 
         <main className={styles.content}>
-          <Outlet />
+          {/* Global container applies max-width + centering */}
+          <div className="container">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

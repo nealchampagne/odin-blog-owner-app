@@ -95,16 +95,15 @@
   font-size: 0.85rem;
   cursor: pointer;
   border: none;
-  transition: background 0.2s ease;
 }
 
-.editButton {
-  background: #111;
+.viewButton {
+  background: hsl(211, 100%, 50%);
   color: white;
 }
-
-.editButton:hover {
-  background: #333;
+.viewButton:hover, .createButton:hover, .createButtonLarge:hover {
+  background: hsl(211, 100%, 40%) !important;
+  text-decoration: none !important;
 }
 
 .deleteButton {
@@ -113,11 +112,37 @@
 }
 
 .deleteButton:hover {
-  background: #b22;
+  background: #b22 !important;
 }
 
 .empty {
   padding: 2rem;
   text-align: center;
   color: #666;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.pageButton {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pageButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  font-size: 0.9rem;
+  color: #4b5563;
 }

@@ -1,11 +1,21 @@
 import api from "./client";
 import type { Comment } from "../types/comment";
+import type { PaginatedResponse } from "../types/pagination";
 
 const getAllComments = () =>
   api<Comment[]>("/comments");
 
-const getCommentsForPost = (postId: string) =>
+const getAllCommentsForPost = (postId: string) =>
   api<Comment[]>(`/posts/${postId}/comments`);
+
+const getCommentsForPost = (
+  postId: string,
+  page = 1,
+  pageSize = 10
+) =>
+  api<PaginatedResponse<Comment>>(
+    `/posts/${postId}/comments?page=${page}&pageSize=${pageSize}`
+  );
 
 const updateComment = (id: string, data: { content: string }) =>
   api<Comment>(`/comments/${id}`, {
@@ -26,6 +36,7 @@ const createComment = (postId: string, data: { content: string }) =>
 
 export { 
   getAllComments,
+  getAllCommentsForPost,
   getCommentsForPost,
   deleteComment,
   createComment,

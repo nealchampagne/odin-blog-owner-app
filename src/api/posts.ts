@@ -1,7 +1,9 @@
 import api from "./client";
 import type { Post, CreatePostPayload, UpdatePostPayload } from "../types/post";
+import type { PaginatedResponse } from "../types/pagination";
 
-const getPosts = () => api<Post[]>("/posts");
+const getPosts = (page = 1, pageSize = 10) => 
+  api<PaginatedResponse<Post>>(`/posts?page=${page}&pageSize=${pageSize}`);
 
 const getPost = (id: string) => api<Post>(`/posts/${id}`);
 

@@ -31,16 +31,17 @@ const PostDetail = () => {
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editCommentText, setEditCommentText] = useState("");
 
+  // Pagination state
+  const [commentPage, setCommentPage] = useState(1);
+  const commentPageSize = 10;
+  const [commentTotalPages, setCommentTotalPages] = useState(1);
+
+  // Load post
   useEffect(() => {
     const load = async () => {
       try {
-        const [postData, commentData] = await Promise.all([
-          getPost(id!),
-          getCommentsForPost(id!)
-        ]);
-
+        const postData = await getPost(id!);
         setPost(postData);
-        setComments(commentData);
       } catch {
         setError("Failed to load post.");
       } finally {
@@ -51,15 +52,49 @@ const PostDetail = () => {
     load();
   }, [id]);
 
+  // Load comments (paginated)
+  useEffect(() => {
+    const loadComments = async () => {
+      try {
+        const res = await getCommentsForPost(id!, commentPage, commentPageSize);
+
+        setComments(res.data);
+
+        // Clamp totalPages to at least 1
+        const pages = Math.max(1, res.totalPages);
+        setCommentTotalPages(pages);
+
+        // If comments became empty, reset to page 1
+        if (res.totalPages === 0 && commentPage !== 1) {
+          setCommentPage(1);
+        }
+      } catch {
+        setError("Failed to load comments.");
+      }
+    };
+
+    loadComments();
+  }, [id, commentPage]);
+
+  const refreshComments = async () => {
+    const res = await getCommentsForPost(id!, commentPage, commentPageSize);
+    setComments(res.data);
+
+    const pages = Math.max(1, res.totalPages);
+    setCommentTotalPages(pages);
+
+    if (res.totalPages === 0 && commentPage !== 1) {
+      setCommentPage(1);
+    }
+  };
+
   const handleAddComment = async () => {
     if (!commentText.trim()) return;
 
     try {
       await createComment(id!, { content: commentText });
       setCommentText("");
-
-      const updatedComments = await getCommentsForPost(id!);
-      setComments(updatedComments);
+      await refreshComments();
     } catch {
       setError("Failed to add comment.");
     }
@@ -70,9 +105,7 @@ const PostDetail = () => {
 
     try {
       await deleteComment(commentId);
-
-      const updatedComments = await getCommentsForPost(id!);
-      setComments(updatedComments);
+      await refreshComments();
     } catch {
       setError("Failed to delete comment.");
     }
@@ -86,10 +119,7 @@ const PostDetail = () => {
   const handleSaveCommentEdit = async (commentId: string) => {
     try {
       await updateComment(commentId, { content: editCommentText });
-
-      const updated = await getCommentsForPost(id!);
-      setComments(updated);
-
+      await refreshComments();
       setEditingCommentId(null);
       setEditCommentText("");
     } catch {
@@ -102,13 +132,8 @@ const PostDetail = () => {
     setEditCommentText("");
   };
 
-  const handleStartEditPost = () => {
-    setEditingPost(true);
-  };
-
-  const handleCancelEditPost = () => {
-    setEditingPost(false);
-  };
+  const handleStartEditPost = () => setEditingPost(true);
+  const handleCancelEditPost = () => setEditingPost(false);
 
   const handleSaveEditPost = async (values: { title: string; content: string }) => {
     setSavingPost(true);
@@ -116,13 +141,10 @@ const PostDetail = () => {
 
     try {
       await updatePost(id!, values);
-
       const updated = await getPost(id!);
       setPost(updated);
-
       setEditingPost(false);
-    } catch (err) {
-      console.error(err);
+    } catch {
       setError("Failed to update post.");
     } finally {
       setSavingPost(false);
@@ -162,7 +184,7 @@ const PostDetail = () => {
 
       <h1 className={styles.heading}>
         {post.title}
-        {post.published ? "" : " (Draft)"}
+        {!post.published && " - [Draft]"}
       </h1>
 
       {editingPost ? (
@@ -204,63 +226,93 @@ const PostDetail = () => {
         {comments.length === 0 ? (
           <p className={styles.empty}>No comments yet.</p>
         ) : (
-          <div className={styles.commentList}>
-            {comments.map((c) => (
-              <div key={c.id} className={styles.commentCard}>
-                <div className={styles.commentMeta}>
-                  {new Date(c.createdAt).toLocaleString()}
-                </div>
-
-                {editingCommentId === c.id ? (
-                  <div className={styles.editContainer}>
-                    <textarea
-                      className={styles.textarea}
-                      value={editCommentText}
-                      onChange={(e) => setEditCommentText(e.target.value)}
-                    />
-
-                    <div className={styles.commentActions}>
-                      <button
-                        className={styles.submitButton}
-                        onClick={() => handleSaveCommentEdit(c.id)}
-                      >
-                        Save
-                      </button>
-
-                      <button
-                        className={styles.cancelButton}
-                        onClick={handleCancelCommentEdit}
-                      >
-                        Cancel
-                      </button>
-                    </div>
+          <>
+            <div className={styles.commentList}>
+              {comments.map((c) => (
+                <div key={c.id} className={styles.commentCard}>
+                  <div className={styles.commentMeta}>
+                    {new Date(c.createdAt).toLocaleString()}
                   </div>
-                ) : (
-                  <>
-                    <div>{c.content}</div>
 
-                    <div className={styles.commentActions}>
-                      {c.authorId === post.authorId && (
+                  <div className={styles.commentAuthor}>
+                    {c.author.name}
+                  </div>
+
+
+                  {editingCommentId === c.id ? (
+                    <div className={styles.editContainer}>
+                      <textarea
+                        className={styles.textarea}
+                        value={editCommentText}
+                        onChange={(e) => setEditCommentText(e.target.value)}
+                      />
+
+                      <div className={styles.commentActions}>
                         <button
-                          className={styles.editButton}
-                          onClick={() => handleStartCommentEdit(c)}
+                          className={styles.submitButton}
+                          onClick={() => handleSaveCommentEdit(c.id)}
                         >
-                          Edit
+                          Save
                         </button>
-                      )}
 
-                      <button
-                        className={styles.deleteButton}
-                        onClick={() => handleDeleteComment(c.id)}
-                      >
-                        Delete
-                      </button>
+                        <button
+                          className={styles.cancelButton}
+                          onClick={handleCancelCommentEdit}
+                        >
+                          Cancel
+                        </button>
+                      </div>
                     </div>
-                  </>
-                )}
+                  ) : (
+                    <>
+                      <div>{c.content}</div>
+
+                      <div className={styles.commentActions}>
+                        {c.authorId === post.authorId && (
+                          <button
+                            className={styles.editButton}
+                            onClick={() => handleStartCommentEdit(c)}
+                          >
+                            Edit
+                          </button>
+                        )}
+
+                        <button
+                          className={styles.deleteButton}
+                          onClick={() => handleDeleteComment(c.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {commentTotalPages > 1 && (
+              <div className={styles.pagination}>
+                <button
+                  disabled={commentPage === 1}
+                  onClick={() => setCommentPage(commentPage - 1)}
+                >
+                  Previous
+                </button>
+
+                <span>
+                  Page {commentPage} of {commentTotalPages}
+                </span>
+
+                <button
+                  disabled={commentPage === commentTotalPages}
+                  onClick={() => setCommentPage(commentPage + 1)}
+                >
+                  Next
+                </button>
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
 
         <div className={styles.addCommentForm}>
