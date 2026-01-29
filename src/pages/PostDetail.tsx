@@ -19,6 +19,9 @@ import MarkdownEditor from "../components/MarkdownEditor";
 const PostDetail = () => {
   const { id } = useParams();
 
+  const stored = localStorage.getItem("user");
+  const user = stored ? JSON.parse(stored) : null;
+
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -100,11 +103,11 @@ const PostDetail = () => {
     }
   };
 
-  const handleDeleteComment = async (commentId: string) => {
+  const handleDeleteComment = async (postId: string, commentId: string) => {
     if (!confirm("Delete this comment?")) return;
 
     try {
-      await deleteComment(commentId);
+      await deleteComment(postId, commentId);
       await refreshComments();
     } catch {
       setError("Failed to delete comment.");
@@ -116,9 +119,9 @@ const PostDetail = () => {
     setEditCommentText(comment.content);
   };
 
-  const handleSaveCommentEdit = async (commentId: string) => {
+  const handleSaveCommentEdit = async (postId: string, commentId: string) => {
     try {
-      await updateComment(commentId, { content: editCommentText });
+      await updateComment(postId, commentId, { content: editCommentText });
       await refreshComments();
       setEditingCommentId(null);
       setEditCommentText("");
@@ -250,7 +253,7 @@ const PostDetail = () => {
                       <div className={styles.commentActions}>
                         <button
                           className={styles.submitButton}
-                          onClick={() => handleSaveCommentEdit(c.id)}
+                          onClick={() => handleSaveCommentEdit(post.id, c.id)}
                         >
                           Save
                         </button>
@@ -268,7 +271,7 @@ const PostDetail = () => {
                       <div>{c.content}</div>
 
                       <div className={styles.commentActions}>
-                        {c.authorId === post.authorId && (
+                        {c.authorId === user.id && (
                           <button
                             className={styles.editButton}
                             onClick={() => handleStartCommentEdit(c)}
@@ -279,7 +282,7 @@ const PostDetail = () => {
 
                         <button
                           className={styles.deleteButton}
-                          onClick={() => handleDeleteComment(c.id)}
+                          onClick={() => handleDeleteComment(post.id, c.id)}
                         >
                           Delete
                         </button>

@@ -2,12 +2,11 @@ import api from "./client";
 import type { Comment } from "../types/comment";
 import type { PaginatedResponse } from "../types/pagination";
 
-const getAllComments = () =>
-  api<Comment[]>("/comments");
-
+// Get all comments for a post (non-paginated)
 const getAllCommentsForPost = (postId: string) =>
   api<Comment[]>(`/posts/${postId}/comments`);
 
+// Get paginated comments for a post
 const getCommentsForPost = (
   postId: string,
   page = 1,
@@ -17,28 +16,34 @@ const getCommentsForPost = (
     `/posts/${postId}/comments?page=${page}&pageSize=${pageSize}`
   );
 
-const updateComment = (id: string, data: { content: string }) =>
-  api<Comment>(`/comments/${id}`, {
-    method: "PATCH",
-    body: JSON.stringify(data)
-  });
-
-const deleteComment = (id: string) =>
-  api<{ success: boolean }>(`/comments/${id}`, {
-    method: "DELETE"
-  });
-
+// Create a new comment under a post
 const createComment = (postId: string, data: { content: string }) =>
   api<Comment>(`/posts/${postId}/comments`, {
     method: "POST",
     body: JSON.stringify(data)
   });
 
-export { 
-  getAllComments,
+// Update a comment (requires commentId + postId)
+const updateComment = (
+  postId: string,
+  commentId: string,
+  data: { content: string }
+) =>
+  api<Comment>(`/posts/${postId}/comments/${commentId}`, {
+    method: "PATCH",
+    body: JSON.stringify(data)
+  });
+
+// Delete a comment
+const deleteComment = (postId: string, commentId: string) =>
+  api<{ success: boolean }>(`/posts/${postId}/comments/${commentId}`, {
+    method: "DELETE"
+  });
+
+export {
   getAllCommentsForPost,
   getCommentsForPost,
-  deleteComment,
   createComment,
-  updateComment
+  updateComment,
+  deleteComment
 };
