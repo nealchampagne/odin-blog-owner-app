@@ -27,7 +27,11 @@ The project is a **proof‑of‑concept**, designed to demonstrate a clean separ
 ## **Tech Stack**
 - **React + Vite**  
 - **TypeScript**  
-- **React Router**  
+- **React Router**
+- **Native `fetch` API**
+- **Zustand** (client-side state)
+- **CSS Modules** for scoped styling 
+- **Vite environment variables** for API configuration
 - **JWT‑based authentication** (stored in memory or localStorage depending on your setup)
 
 ---
@@ -128,8 +132,7 @@ It demonstrates:
 - a clean admin workflow  
 - a decoupled frontend/backend architecture  
 - a production‑ready deployment pipeline  
-- a real Postgres database (Aiven)  
-- a free‑tier hosting strategy  
+- a real Postgres database
 
 Future improvements could include:
 
@@ -137,4 +140,9 @@ Future improvements could include:
 - rich‑text editing  
 - image uploads  
 - analytics dashboard  
-- multi‑author support  
+- multi‑author support
+
+---
+
+## **License**
+MIT (or your preferred license)
