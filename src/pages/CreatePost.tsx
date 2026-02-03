@@ -28,6 +28,7 @@ const CreatePost = () => {
     <div className={styles.container}>
       <h1 className={styles.heading}>Create New Post</h1>
 
+      {/* Show markdown preview during post creation */}
       <MarkdownEditor
         initialTitle=""
         initialContent=""

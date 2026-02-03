@@ -6,6 +6,10 @@ export type Post = {
   authorId: string;
   createdAt: string;
   updatedAt: string;
+  publishedAt?: string | null;
+  _count: {
+    comments: number;
+  };
 };
 
 export type CreatePostPayload = {

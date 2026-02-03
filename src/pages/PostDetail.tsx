@@ -79,6 +79,7 @@ const PostDetail = () => {
     loadComments();
   }, [id, commentPage]);
 
+  // Refresh comments helper for deletion/addition/update
   const refreshComments = async () => {
     const res = await getCommentsForPost(id!, commentPage, commentPageSize);
     setComments(res.data);
@@ -190,6 +191,7 @@ const PostDetail = () => {
         {!post.published && " - [Draft]"}
       </h1>
 
+      {/* Show markdown preview while editing */}
       {editingPost ? (
         <MarkdownEditor
           initialTitle={post.title ?? ""}

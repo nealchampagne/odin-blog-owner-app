@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import styles from "./PostsList.module.css";
 
 import { getPosts, deletePost } from "../api/posts";
-import { getAllCommentsForPost } from "../api/comments";
 import EmptyState from "../components/EmptyState";
 
 import type { Post } from "../types/post";
 
+// Generate list of posts
 const PostsList = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
@@ -17,25 +17,24 @@ const PostsList = () => {
   const pageSize = 10;
   const [totalPages, setTotalPages] = useState(1);
 
+  // Load posts function
   const loadPosts = useCallback(async () => {
     setLoading(true);
 
+    // Fetch posts with pagination
     const res = await getPosts(page, pageSize);
     setPosts(res.data);
     setTotalPages(res.totalPages);
 
-    const counts: Record<string, number> = {};
-    await Promise.all(
-      res.data.map(async (p) => {
-        const comments = await getAllCommentsForPost(p.id);
-        counts[p.id] = comments.length;
-      })
+    // Extract comment counts
+    setCommentCounts(
+      Object.fromEntries(res.data.map(p => [p.id, p._count.comments]))
     );
 
-    setCommentCounts(counts);
     setLoading(false);
   }, [page, pageSize]);
 
+  // Initial load and reload on page change
   useEffect(() => {
     const run = async () => {
       await loadPosts();
@@ -49,6 +48,27 @@ const PostsList = () => {
     loadPosts();
   };
 
+  // Format published date for readability
+  const formatPublishedAt = (dateString: string | null) => {
+    if (!dateString) return "N/A";
+
+    const date = new Date(dateString);
+
+    const datePart = date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+
+    const timePart = date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+    });
+
+    return `${datePart} - ${timePart}`;
+  };
+
+
   return (
     <div className={styles.container}>
       <div className={styles.headerRow}>
@@ -59,6 +79,7 @@ const PostsList = () => {
         </Link>
       </div>
 
+      {/* Show loading or empty state if no posts to display yet */}
       {loading ? (
         <p>Loading…</p>
       ) : posts.length === 0 ? (
@@ -70,13 +91,14 @@ const PostsList = () => {
         />
       ) : (
         <>
+          {/* Format posts list as table */}
           <div className={styles.tableWrapper}>
             <table className={styles.table}>
               <thead>
                 <tr>
                   <th>Title</th>
                   <th>Comments</th>
-                  <th>Created</th>
+                  <th>Date Published</th>
                   <th></th>
                 </tr>
               </thead>
@@ -99,7 +121,7 @@ const PostsList = () => {
 
                     <td>{commentCounts[post.id] ?? 0}</td>
 
-                    <td>{new Date(post.createdAt).toLocaleDateString()}</td>
+                    <td>{formatPublishedAt(post.publishedAt ?? null)}</td>
 
                     <td>
                       <div className={styles.actions}>

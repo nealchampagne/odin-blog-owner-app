@@ -21,7 +21,12 @@ export const useAuth = create<AuthState>((set) => ({
   error: null,
 
   login: async (email, password) => {
-    set({ loading: true, error: null });
+    set({ user: null, token: null, error: null });
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    set({ loading: true });
 
     try {
       const { user, token }: LoginResponse = await loginRequest(email, password);

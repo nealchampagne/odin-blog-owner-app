@@ -3,6 +3,7 @@ import { getDashboardStats } from "../api/admin";
 import styles from "./Dashboard.module.css";
 
 const Dashboard = () => {
+  // State for dashboard statistics
   const [stats, setStats] = useState<null | {
     totalPosts: number;
     draftPosts: number;
