@@ -2,10 +2,10 @@ import { useEffect, useState, useCallback} from "react";
 import { Link } from "react-router-dom";
 import styles from "./PostsList.module.css";
 
-import { getPosts, deletePost } from "../api/posts";
-import EmptyState from "../components/EmptyState";
+import { getPosts, deletePost } from "../api/posts.js";
+import EmptyState from "../components/EmptyState.jsx";
 
-import type { Post } from "../types/post";
+import type { Post } from "../types/post.js";
 
 // Generate list of posts
 const PostsList = () => {
@@ -28,8 +28,12 @@ const PostsList = () => {
 
     // Extract comment counts
     setCommentCounts(
-      Object.fromEntries(res.data.map(p => [p.id, p._count.comments]))
+      Object.fromEntries(
+        (res.data as { id: string; _count: { comments: number } }[])
+          .map((p) => [p.id, p._count.comments])
+      )
     );
+
 
     setLoading(false);
   }, [page, pageSize]);

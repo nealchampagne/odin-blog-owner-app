@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../store/auth";
+import { useAuth } from "../store/auth.js";
 import styles from "./Login.module.css";
 
 const Login = () => {
@@ -24,8 +24,9 @@ const Login = () => {
       <h1 className={styles.title}>Admin Login</h1>
 
       <form className={styles.form} onSubmit={handleSubmit}>
-        <label className={styles.label}>Email</label>
+        <label className={styles.label} htmlFor="email">Email</label>
         <input
+          id="email"
           className={styles.input}
           type="email"
           value={email}
@@ -33,8 +34,9 @@ const Login = () => {
           required
         />
 
-        <label className={styles.label}>Password</label>
+        <label className={styles.label} htmlFor="password">Password</label>
         <input
+          id="password"
           className={styles.input}
           type="password"
           value={password}

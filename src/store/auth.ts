@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import type { User } from "../types/user";
-import type { LoginResponse } from "../types/auth";
-import loginRequest from "../api/auth";
+import type { User } from "../types/user.js";
+import type { LoginResponse } from "../types/auth.js";
+import loginRequest from "../api/auth.js";
 
 type AuthState = {
   user: User | null;

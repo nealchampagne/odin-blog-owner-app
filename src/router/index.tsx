@@ -1,12 +1,12 @@
 import { createBrowserRouter } from "react-router-dom";
-import AdminLayout from "../AdminLayout";
-import AdminGuard from "../components/AdminGuard";
+import AdminLayout from "../AdminLayout.jsx";
+import AdminGuard from "../components/AdminGuard.jsx";
 
-import PostsList from "../pages/PostsList";
-import CreatePost from "../pages/CreatePost";
-import PostDetail from "../pages/PostDetail";
-import Login from "../pages/Login";
-import Dashboard from "../pages/Dashboard";
+import PostsList from "../pages/PostsList.jsx";
+import CreatePost from "../pages/CreatePost.jsx";
+import PostDetail from "../pages/PostDetail.jsx";
+import Login from "../pages/Login.jsx";
+import Dashboard from "../pages/Dashboard.jsx";
 
 export const router = createBrowserRouter([
   { path: "/login", element: <Login /> },

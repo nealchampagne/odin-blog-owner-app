@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getDashboardStats } from "../api/admin";
+import { getDashboardStats } from "../api/admin.js";
 import styles from "./Dashboard.module.css";
 
 const Dashboard = () => {

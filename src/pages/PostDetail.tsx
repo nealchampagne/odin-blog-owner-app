@@ -2,19 +2,19 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styles from "./PostDetail.module.css";
 
-import { getPost, publishPost, unpublishPost, updatePost } from "../api/posts";
+import { getPost, publishPost, unpublishPost, updatePost } from "../api/posts.js";
 import {
   getCommentsForPost,
   createComment,
   deleteComment,
   updateComment
-} from "../api/comments";
+} from "../api/comments.js";
 
-import type { Post } from "../types/post";
-import type { Comment } from "../types/comment";
+import type { Post } from "../types/post.js";
+import type { Comment } from "../types/comment.js";
 
 import ReactMarkdown from "react-markdown";
-import MarkdownEditor from "../components/MarkdownEditor";
+import MarkdownEditor from "../components/MarkdownEditor.jsx";
 
 const PostDetail = () => {
   const { id } = useParams();
@@ -234,7 +234,7 @@ const PostDetail = () => {
           <>
             <div className={styles.commentList}>
               {comments.map((c) => (
-                <div key={c.id} className={styles.commentCard}>
+                <div key={c.id} data-testid={`comment-card-${c.id}`} className={styles.commentCard}>
                   <div className={styles.commentMeta}>
                     {new Date(c.createdAt).toLocaleString()}
                   </div>

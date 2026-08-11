@@ -1,6 +1,7 @@
-const API_URL = import.meta.env.VITE_API_URL;
+const PUBLIC_PATHS = ["/login", "/register"];
 
-  const PUBLIC_PATHS = ["/login", "/register"];
+const getApiUrl = () =>
+  (import.meta as ImportMeta)?.env?.VITE_API_URL || process.env.VITE_API_URL || "";
 
 const api = async <T = unknown>(
   path: string,
@@ -13,7 +14,7 @@ const api = async <T = unknown>(
 
   const isPublic = PUBLIC_PATHS.some(p => path.startsWith(p));
 
-  const res = await fetch(`${API_URL}${path}`, {
+  const res = await fetch(`${getApiUrl()}${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -23,11 +24,19 @@ const api = async <T = unknown>(
   });
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Request failed");
+    // Try to parse JSON, but fall back to empty object
+    const err: unknown = await res.json().catch(() => ({}));
+
+    if (typeof err === "object" && err !== null && "message" in err) {
+      throw new Error((err as { message?: string }).message ?? "Request failed");
+    }
+
+    throw new Error("Request failed");
   }
 
-  return res.json();
+
+  const data = await res.json();
+  return data as T;
 }
 
 export default api;

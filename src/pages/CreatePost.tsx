@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./CreatePost.module.css";
-import { createPost } from "../api/posts";
-import MarkdownEditor from "../components/MarkdownEditor";
+import { createPost } from "../api/posts.js";
+import MarkdownEditor from "../components/MarkdownEditor.jsx";
 
 const CreatePost = () => {
   const navigate = useNavigate();
